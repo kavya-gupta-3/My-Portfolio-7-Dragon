@@ -1,0 +1,51 @@
+/* ------------------------------------------------------------------ tokens */
+
+:root {
+  --bg: #07060a;
+  --ink: #f6f4f8;
+  --ink-2: rgba(246, 244, 248, 0.72);
+  --dim: rgba(246, 244, 248, 0.5);
+  --faint: rgba(246, 244, 248, 0.16);
+  --line: rgba(255, 255, 255, 0.07);
+  --line-2: rgba(255, 255, 255, 0.13);
+  --accent: #ff7a2e;
+  --accent2: #ffc56a;
+  --glow: color-mix(in oklab, var(--accent) 45%, transparent);
+
+  /* surfaces sit over a live 3D canvas, so they carry their own opacity
+     instead of a backdrop blur that would have to re-render every frame */
+  --surface: rgba(19, 17, 25, 0.82);
+  --surface-2: rgba(28, 25, 36, 0.86);
+  --surface-solid: #15131c;
+
+  --f-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --f-ui: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  --gutter: clamp(16px, 4vw, 64px);
+  --maxw: 1240px;
+  --r-xs: 10px;
+  --r-sm: 14px;
+  --r: 20px;
+  --r-lg: 28px;
+  --r-xl: 36px;
+  --pill: 999px;
+  --shadow-sm: 0 8px 24px -12px rgba(0, 0, 0, 0.7);
+  --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.75);
+  --edge: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --hud-h: 76px;
+}
+
+/* per-dragon accents. Each chapter of the page carries its own (its section
+   has a fixed data-stage) and JS switches the frame around the film. <html>
+   keeps the first one: a new accent there would restyle every element on
+   the page, a hitch each time a chapter begins. */
+[data-stage='0'] { --accent: #ff7a2e; --accent2: #ffc56a; }
+[data-stage='1'] { --accent: #ff4fdc; --accent2: #5cf2ff; }
+[data-stage='2'] { --accent: #38e0ff; --accent2: #9a82ff; }
+[data-stage='3'] { --accent: #2bef9a; --accent2: #c8ff6a; }
+[data-stage='4'] { --accent: #ffc53d; --accent2: #fff0b8; }
+[data-stage='5'] { --accent: #b184ff; --accent2: #ff8ade; }
+[data-stage='6'] { --accent: #ff4a63; --accent2: #ff9a56; }
+[data-stage] { --glow: color-mix(in oklab, var(--accent) 45%, transparent); }

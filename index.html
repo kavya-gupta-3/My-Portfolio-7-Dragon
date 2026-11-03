@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" class="no-js" data-stage="0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>KAVYA GUPTA</title>
+    <meta name="description" content="Kavya Gupta — self-taught developer and BCA student. Websites, web apps, games and AI automations, presented by seven dragons." />
+    <meta name="author" content="Kavya Gupta" />
+    <meta name="theme-color" content="#060509" />
+    <meta name="color-scheme" content="dark" />
+    <style>
+      /* Until the stylesheet has arrived: the night sky, never a raw page. The
+         stylesheet shows the page; if it never comes, the page shows anyway. */
+      html { background: #07060a; }
+      body { visibility: hidden; animation: kg-boot 0s 8s forwards; }
+      @keyframes kg-boot { to { visibility: visible; } }
+    </style>
+    <link rel="canonical" href="%SITE_URL%/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Kavya Gupta" />
+    <meta property="og:title" content="KAVYA GUPTA — seven dragons, one developer" />
+    <meta property="og:description" content="Self-taught developer & BCA student. A full-3D site guarded by seven procedural dragons." />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:image" content="%SITE_URL%/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The KAVYA GUPTA dragon sigil above an obsidian dragon wreathed in fire" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="KAVYA GUPTA" />
+    <meta name="twitter:description" content="Self-taught developer & BCA student. Seven dragons. Zero timetables." />
+    <meta name="twitter:image" content="%SITE_URL%/og.jpg" />
+    <script type="application/ld+json">%PERSON_SCHEMA%</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <div class="fallback-sky" aria-hidden="true"></div>
+    <!--app-->
+    <noscript><style>.loader{display:none!important}</style></noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

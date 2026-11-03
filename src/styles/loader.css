@@ -1,0 +1,82 @@
+/* ------------------------------------------------------------------ loader */
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #06050a;
+  color: var(--ink);
+}
+.loader.is-leaving {
+  pointer-events: none;
+}
+.ld-core {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(460px, calc(100vw - 32px));
+  text-align: center;
+}
+.ld-ring {
+  position: relative;
+  width: clamp(116px, 18vw, 148px);
+  aspect-ratio: 1;
+  margin-bottom: 8px;
+}
+.ld-ring svg:first-child {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.ld-track,
+.ld-arc {
+  fill: none;
+  stroke-width: 2;
+}
+.ld-track {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+.ld-arc {
+  stroke: #ff9a4a;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--p, 0));
+}
+.ld-mark {
+  position: absolute;
+  inset: 20%;
+  width: 60%;
+  height: 60%;
+  --sigil-0: #fff0c4;
+  --sigil-1: #ff9a2e;
+  --sigil-2: #ff2f1f;
+}
+.ld-name {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(1.25rem, 3.4vw, 1.7rem);
+  letter-spacing: 0.22em;
+  padding-left: 0.22em;
+  color: #fff3e2;
+}
+.ld-status {
+  min-height: 1.6em;
+  font-size: 0.88rem;
+  color: var(--dim);
+}
+.ld-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.ld-actions[hidden] {
+  display: none;
+}
