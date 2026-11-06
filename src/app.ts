@@ -32,7 +32,7 @@ import { EntryTitle } from './ui/EntryTitle';
 import { initHover } from './ui/Hover';
 import { HeroName } from './ui/HeroName';
 import { Hud } from './ui/Hud';
-import { bindProfile, loadGithub, loadPulse } from './ui/Live';
+import { bindProfile, loadPulse } from './ui/Live';
 import { Loader } from './ui/Loader';
 import { Menu } from './ui/Menu';
 import { initProjectArt } from './ui/ProjectArt';
@@ -47,6 +47,11 @@ ScrollTrigger.config({ ignoreMobileResize: true });
 const params = new URLSearchParams(location.search);
 /** `?skip` bypasses the intro screen and the opening sequence. */
 const SKIP_INTRO = params.has('skip');
+
+/** How long the wheel must have been still before a page an entrance landed on is let go, ms. */
+const SETTLE = 350;
+/** ...and the longest it is held after the entrance for it, ms. */
+const HOLD = 1600;
 
 const INTERACTIVE = 'a, button, input, textarea, select, label, .panel, .proj, .pro-row, .vault-item, .social, .email-big, .hv, .hero-stats, .menu, .cmdk, .game, .film-sub, .hud-rail';
 
@@ -166,6 +171,10 @@ export async function boot() {
   const live = new LiveWindow($$('main > .stage'));
 
   const entryTitle = new EntryTitle();
+  /** Where the entrance playing now is taking the page, worked out afresh each time it's asked. */
+  let landing: (() => number) | null = null;
+  /** When the visitor last scrolled or swiped. */
+  let nudged = -Infinity;
   /**
    * Summon a dragon: its entrance plays, then the scene hands over to its film
    * at the first line, or to its page. The wipe hides the jump.
@@ -177,16 +186,43 @@ export async function boot() {
     html.classList.add('entering');
     entryTitle.arm(i);
     scroll.stop();
-    scroll.to(toPage ? scroll.bodyOffset(i) : scroll.filmOffset(i, line), true);
+    landing = () => (toPage ? scroll.bodyOffset(i) : scroll.filmOffset(i, line));
+    scroll.to(landing(), true);
     return true;
+  };
+  /**
+   * The entrance is over: put the page exactly where it was going (it may have
+   * moved underneath), and give the wheel back only once the scroll that
+   * hurried the entrance has died away, so its last flicks can't carry the
+   * reader off into the middle of a film.
+   */
+  const land = (ended: number) => {
+    // another entrance has started since: it lands itself
+    if (engine?.entering) return;
+    const now = performance.now();
+    if (now - nudged < SETTLE && now - ended < HOLD) {
+      window.setTimeout(() => land(ended), SETTLE - (now - nudged) + 16);
+      return;
+    }
+    scroll.measure();
+    if (landing) scroll.to(landing(), true);
+    landing = null;
+    // the menu or the game opened meanwhile: closing it lets the page go
+    if (!paused) scroll.start();
   };
 
   /** Any way of asking for a chapter: its dragon makes an entrance. */
   const goTo = (i: number, toPage = true) => {
     if (!$$('main > .stage')[i]) return;
+    // one entrance at a time: asking for another chapter mid-way only hurries this one
+    if (engine?.entering) {
+      engine.hurryEntry();
+      return;
+    }
     synth.ui('press');
     const here = i === scroll.scene && scroll.hero >= 0.98;
     if (!here && summon(i, toPage && i !== 0)) return;
+    landing = null;
     if (i === 0) scroll.to(0, scroll.scene !== 0);
     else scroll.to(scroll.bodyOffset(i), i !== scroll.scene);
   };
@@ -253,10 +289,12 @@ export async function boot() {
       if (/^\d$/.test(text)) synth.count(Number(text));
       else if (text === 'GO') synth.count(0);
     };
-    engine.onEntryEnd = () => {
+    engine.onEntryEnd = (_dragon, cut) => {
       html.classList.remove('entering');
       entryTitle.leave();
-      scroll.start();
+      // cut short because the page went elsewhere: it stays where it went
+      if (cut) landing = null;
+      land(performance.now());
     };
   }
 
@@ -264,22 +302,23 @@ export async function boot() {
   const cover = (open: boolean) => {
     paused = open;
     if (open) scroll.stop();
-    else scroll.start();
+    // an entrance holds the page until it lands
+    else if (!engine?.entering && !landing) scroll.start();
   };
   const menu = new Menu(cover);
   const game = new EmberHunt({
-    open: () => {
-      paused = true;
-      scroll.stop();
-    },
-    close: () => {
-      paused = false;
-      scroll.start();
-    },
+    open: () => cover(true),
+    close: () => cover(false),
     sound: (k) => (k === 'eat' ? synth.blip(1200) : k === 'gold' ? synth.chime() : k === 'die' ? synth.voice(0, 'impact', 0.6) : synth.whoosh()),
   });
 
   const tour = new Tour(scroll);
+  /** The tour moves the page, so it waits for an entrance to finish. */
+  const tourFrom = (from: number | null) => {
+    if (engine?.entering) return;
+    landing = null;
+    tour.start(from);
+  };
   const share = async () => {
     const url = `${location.origin}/`;
     if (navigator.share) {
@@ -357,8 +396,8 @@ export async function boot() {
     { id: 'q-low', label: 'Quality: low', hint: 'reload', keywords: 'graphics performance battery', run: () => setQuality('low') },
     { id: 'replay', label: 'Replay the opening', hint: 'seven dragons', keywords: 'intro film cinematic', run: () => replay() },
     { id: 'top', label: 'Back to the fire', hint: 'top', keywords: 'home start', run: () => goTo(0) },
-    { id: 'tour', label: 'Auto-tour from the start', hint: 'sit back', keywords: 'auto scroll play demo watch tour start beginning', run: () => tour.start(0) },
-    { id: 'tour-here', label: 'Auto-scroll from here', hint: 'hands free', keywords: 'auto scroll play continue tour', run: () => tour.start(null) },
+    { id: 'tour', label: 'Auto-tour from the start', hint: 'sit back', keywords: 'auto scroll play demo watch tour start beginning', run: () => tourFrom(0) },
+    { id: 'tour-here', label: 'Auto-scroll from here', hint: 'hands free', keywords: 'auto scroll play continue tour', run: () => tourFrom(null) },
     { id: 'next', label: 'Next chapter', hint: 'next dragon', keywords: 'forward skip ahead', run: () => goTo(Math.min(STAGES.length - 1, scroll.scene + 1)) },
     { id: 'prev', label: 'Previous chapter', hint: 'go back', keywords: 'backward back', run: () => goTo(Math.max(0, scroll.scene - 1)) },
     { id: 'random', label: 'Surprise me', hint: 'a random dragon', keywords: 'random shuffle dragon lucky', run: surprise },
@@ -439,11 +478,15 @@ export async function boot() {
   window.addEventListener('click', (e) => {
     if (pressedBy !== 'mouse' && e.detail > 0) answer(e);
   }, { passive: true });
-  const hurry = () => engine?.hurryEntry();
+  const hurry = () => {
+    nudged = performance.now();
+    engine?.hurryEntry();
+  };
   window.addEventListener('wheel', hurry, { passive: true });
   window.addEventListener('touchstart', hurry, { passive: true });
+  window.addEventListener('touchmove', hurry, { passive: true });
   window.addEventListener('keydown', (e) => {
-    if (engine?.entering && (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter')) hurry();
+    if (engine?.entering && (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter')) engine.hurryEntry();
     if (isTyping(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key.toLowerCase() === 'm') void setSound(!synth.enabled);
     if (e.key.toLowerCase() === 'f') toggleFullscreen();
@@ -457,7 +500,8 @@ export async function boot() {
   /* ------------------------------------------------------------ enter */
   const playOpening = !quality.reducedMotion && !SKIP_INTRO && !!engine && !location.hash;
   const replay = () => {
-    if (!engine) return;
+    if (!engine || engine.entering) return;
+    landing = null;
     scroll.to(0, true);
     html.classList.add('intro');
     heroName.reset();
@@ -479,7 +523,6 @@ export async function boot() {
     window.addEventListener('wheel', quicken, { once: true, passive: true });
     window.addEventListener('touchmove', quicken, { once: true, passive: true });
   } else heroName.show();
-  void loadGithub();
   void loadPulse();
 
   /* ------------------------------------------------------------- loop */

@@ -135,7 +135,7 @@ export const FILM: Chapter[] = [
     card: [0, 0.1],
     lines: [
       { at: 0.1, to: 0.27, text: 'I am Ignis. I was burning long before the first line of code.' },
-      { at: 0.27, to: 0.46, text: 'The one I guard is Kavya Gupta. A self-taught builder of websites, apps, games and automations.' },
+      { at: 0.27, to: 0.46, text: 'The one I guard is Kavya Gupta. An AI expert who builds websites, apps, games and automations.' },
       { at: 0.46, to: 0.66, text: 'No timetable. No two days alike. A static life, Kavya says, is a boring life.' },
     ],
     outro: 0.8,
@@ -156,7 +156,7 @@ export const FILM: Chapter[] = [
     lines: [
       { at: 0.13, to: 0.32, text: 'I am Volt. Every plate on me is a skill Kavya learned alone.' },
       { at: 0.32, to: 0.54, text: 'No tuition. No classes. One root skill: Kavya can learn anything.' },
-      { at: 0.7, to: 0.92, text: 'Code. AI. n8n automation. The full stack, in a single year. Watch it spark.' },
+      { at: 0.7, to: 0.92, text: 'AI first. Then code and n8n automation, the full stack, in a single year. Watch it spark.' },
     ],
     outro: 0.93,
   },
@@ -206,7 +206,7 @@ export const FILM: Chapter[] = [
 
 export const HERO = {
   eyebrow: 'Specimen 01 · Ignis · The Obsidian Sovereign',
-  kicker: 'Builder of websites, apps, games & automations',
+  kicker: 'Websites, apps, games & automations, built with AI',
 };
 
 export const MANIFESTO = {
@@ -322,24 +322,24 @@ export interface SkillBranch {
 
 export const SKILLS = {
   title: 'Skills',
-  sub: 'The arsenal — every piece of it self-taught.',
+  sub: 'The arsenal — self-taught, and powered by AI.',
   core: {
     label: 'Root skill',
     title: 'I can learn any skill by myself.',
-    body: 'That one is my biggest skill. Every branch below grew out of it.',
+    body: 'That one is my biggest skill, and AI is how I put it to work. Every branch below grew out of it.',
   },
   branches: [
     {
-      id: 'mind',
-      title: 'Mind',
-      code: 'BR-01',
-      items: ['Coding', 'Programming', 'Logic', 'Gaming', 'Puzzle solving'],
-    },
-    {
       id: 'ai',
       title: 'AI',
+      code: 'BR-01',
+      items: ['Claude Code', 'AI coding agents', 'Prompt engineering', 'AI automation', 'AI-powered apps', 'AI video creation', 'Image generation'],
+    },
+    {
+      id: 'mind',
+      title: 'Mind',
       code: 'BR-02',
-      items: ['AI automation', 'Prompt engineering', 'AI video creation', 'Image generation', 'AI-powered apps'],
+      items: ['Coding', 'Programming', 'Logic', 'Gaming', 'Puzzle solving'],
     },
     {
       id: 'n8n',
@@ -372,6 +372,21 @@ export const SKILLS = {
   ],
 };
 
+/** How Kavya works: with AI, and this site is the proof. */
+export const AI_WAY = {
+  tag: 'How I work',
+  note: 'AI first',
+  title: 'I’m an AI expert. I build with AI, every day.',
+  body: 'I’m extremely good at using AI. I decide what to make, imagine how it should look and feel, and give the commands. AI does the work, and I steer it until it’s exactly right.',
+  proofTitle: 'The biggest proof: this website.',
+  proof: 'I built all of it with Claude Code. I imagined the seven dragons and the whole theme, and gave the commands. Claude Code wrote the code: the 3D dragons, the shaders, the films, the music, every line.',
+  stats: [
+    { value: '100%', label: 'built with Claude Code' },
+    { value: '~20,000', label: 'lines of code, written by AI' },
+    { value: '1', label: 'director: me' },
+  ],
+};
+
 export interface Project {
   id: string;
   name: string;
@@ -383,6 +398,8 @@ export interface Project {
   glyph: string;
   hue: number;
   note?: string;
+  /** Takes the whole row. */
+  wide?: boolean;
 }
 
 export const PROJECTS_INTRO = {
@@ -391,6 +408,17 @@ export const PROJECTS_INTRO = {
 };
 
 export const PERSONAL_PROJECTS: Project[] = [
+  {
+    id: 'this-site',
+    name: 'This website',
+    kind: 'Built with Claude Code · 3D portfolio',
+    summary:
+      'The site you are on: seven 3D dragons, custom shaders, films and music, all made live in your browser. I imagined it and directed every scene; Claude Code wrote the code.',
+    tags: ['Claude Code', 'Three.js', 'GLSL', 'TypeScript', 'GSAP', 'Web Audio'],
+    glyph: 'AI',
+    hue: 268,
+    wide: true,
+  },
   {
     id: 'neon-arcade',
     name: 'Neon Arcade',
@@ -588,5 +616,3 @@ export const CONTACT = {
     { id: 'linkedin', label: 'LinkedIn', handle: 'Kavya Gupta', url: 'https://www.linkedin.com/in/kavya-gupta-10a355401' },
   ],
 };
-
-export const GITHUB_USER = 'kavya-gupta-3';

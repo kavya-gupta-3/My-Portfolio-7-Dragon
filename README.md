@@ -4,6 +4,9 @@ A full-3D, dragon-themed personal website, told like a film. The page opens on
 all seven dragons in one poster shot; as you scroll, each one takes the screen
 in turn, in its own pinned scene, and tells you part of the story.
 
+Built entirely with Claude Code: Kavya imagined the dragons and the theme and
+gave the commands; Claude Code wrote the code.
+
 | # | Chapter | Dragon | Built from | Its big moment |
 |---|---|---|---|---|
 | 01 | The First Flame | **IGNIS** — The Obsidian Sovereign | overlapping obsidian scales, lava seams, antlers | rears and strikes at the lens with a jet of fire |
@@ -82,7 +85,7 @@ flipping game tiles, a lightning split, crystal shatter, molten gold, a warp.
   language under the subtitles, ambience, click and entrance, plus a melody on the music
   hobby driving a live equaliser). Zero audio files.
 - **Canvas 2D** — generative project cover art and the *Ember Hunt* mini-game
-- **Vercel Edge Functions** (`/api`) — contact form, live GitHub stats, visitor pulse
+- **Vercel Edge Functions** (`/api`) — contact form, visitor pulse
 - **PWA** — hand-written service worker: installable, opens offline
 - Build-time HTML rendering: every word of the page is static HTML (fast, SEO,
   works without JavaScript), then upgraded by the 3D layer
@@ -138,7 +141,6 @@ boundaries), and CI runs it on every push.
 2. Optional environment variables (see `.env.example`):
    - `RESEND_API_KEY` (+ `CONTACT_TO`, `CONTACT_FROM`) — contact form emails you
    - `CONTACT_WEBHOOK_URL` — send messages to an n8n workflow instead / as well
-   - `GITHUB_TOKEN` — live GitHub stats without rate limits
    - `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` (or the Vercel KV
      integration) — visitor counter + durable rate limiting
    - `SITE_URL` — canonical domain for SEO tags if you use a custom domain
@@ -154,7 +156,7 @@ mail app with the message pre-filled.
 ## Structure
 
 ```
-api/                 Vercel Edge Functions (contact, github, pulse)
+api/                 Vercel Edge Functions (contact, pulse)
 src/data/            all content + age/education logic
 src/render/          build-time HTML (page sections, logo)
 src/gl/              3D engine: Engine, Director (camera), PostFX, Sky, NameForge

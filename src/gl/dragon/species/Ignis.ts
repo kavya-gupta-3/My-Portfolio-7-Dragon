@@ -135,8 +135,9 @@ export class Ignis extends Dragon {
 
   override provoke(ctx: FrameContext, loud = true) {
     super.provoke(ctx, loud);
-    // a click beside it only stirs it; a click on it gets the fire
-    if (loud) this.breath = 1.4;
+    // in its own film a click beside it only stirs it, a click on it gets the
+    // fire; with the seven every click does, breathed across the circle at Pixel
+    if (loud || ctx.conclave > 0.5) this.breath = 1.4;
   }
 
   build(result: BlueprintResult) {

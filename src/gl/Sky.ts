@@ -95,6 +95,7 @@ export class Sky {
   /** A shooting star across whatever part of the sky the camera is facing. */
   meteor() {
     const u = this.material.uniforms;
+    if (u.uMeteorT.value >= 0 && u.uMeteorT.value < 0.85) return;
     const across = Math.random() < 0.5 ? -1 : 1;
     u.uMeteorA.value.set(across * (0.3 + Math.random() * 0.5), 0.2 + Math.random() * 0.5, -1).normalize();
     u.uMeteorB.value.set(-across * (0.2 + Math.random() * 0.5), -0.1 + Math.random() * 0.3, -1).normalize();

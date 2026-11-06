@@ -7,6 +7,7 @@ uniform vec3 uEyeColor2;
 uniform float uTime;
 uniform float uRage;
 uniform float uEyeOpen;
+uniform vec4 uHaze;
 
 varying vec3 vWorld;
 varying vec3 vNormal;
@@ -30,5 +31,6 @@ void main() {
   col = mix(col, vec3(0.02, 0.0, 0.0), pupil);
   // dark limbal ring
   col *= smoothstep(-0.2, 0.25, f) * 0.85 + 0.15;
-  gl_FragColor = vec4(col * uEyeOpen, 1.0);
+  // they fade into the air with the rest of the dragon
+  gl_FragColor = vec4(mix(col * uEyeOpen, uHaze.rgb, uHaze.a), 1.0);
 }

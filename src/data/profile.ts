@@ -11,7 +11,7 @@ export const IDENTITY = {
   name: 'Kavya Gupta',
   first: 'KAVYA',
   last: 'GUPTA',
-  role: 'Self-taught developer',
+  role: 'AI expert & developer',
   location: 'Gujarat, India',
   timezone: 'Asia/Kolkata',
 } as const;

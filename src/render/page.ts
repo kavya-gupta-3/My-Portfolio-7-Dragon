@@ -5,6 +5,7 @@
  */
 import {
   ACHIEVEMENTS,
+  AI_WAY,
   ACHIEVEMENTS_INTRO,
   CONTACT,
   DREAMS,
@@ -262,16 +263,20 @@ function skills() {
     </div>
     <div class="branches">${branches}</div>
   </div>
+  <div class="ai-way panel" data-reveal>
+    <p class="panel-tag"><span>${esc(AI_WAY.tag)}</span><i>${esc(AI_WAY.note)}</i></p>
+    <h3>${esc(AI_WAY.title)}</h3>
+    <p class="ai-body">${esc(AI_WAY.body)}</p>
+    <div class="ai-proof">
+      <p><b>${esc(AI_WAY.proofTitle)}</b> ${esc(AI_WAY.proof)}</p>
+      <ul class="ai-stats">${AI_WAY.stats.map((st) => `<li><b>${esc(st.value)}</b><span>${esc(st.label)}</span></li>`).join('')}</ul>
+    </div>
+  </div>
   <div class="arsenal">
     <h3 class="arsenal-title" data-reveal>Tech arsenal <i>${all.length} tools across my projects</i></h3>
     <div class="ars-grid">${arsenal}</div>
   </div>
   <div class="marquee" aria-hidden="true">${marquee(0)}${marquee(9)}</div>
-  <div class="gh-live panel" id="gh-live" data-reveal hidden>
-    <p class="panel-tag"><span>Live from github.com/kavya-gupta-3</span><i class="gh-dot">Online</i></p>
-    <div class="gh-stats" id="gh-stats"></div>
-    <div class="gh-langs" id="gh-langs"></div>
-  </div>
   </div>
 </section>`;
 }
@@ -289,7 +294,7 @@ function projectCard(p: Project, i: number, featured: boolean) {
       ${link}
     </li>`;
   }
-  return `<article class="proj panel" style="--h:${p.hue}" data-tilt data-reveal>
+  return `<article class="proj panel${p.wide ? ' proj--wide' : ''}" style="--h:${p.hue}" data-tilt data-reveal>
     <div class="proj-art" aria-hidden="true" data-glyph="${esc(p.glyph)}"><canvas class="proj-canvas" data-seed="${i + 1}" data-hue="${p.hue}"></canvas><span class="proj-glyph">${esc(p.glyph)}</span></div>
     <div class="proj-body">
       <p class="panel-tag"><span>${esc(p.kind)}</span></p>
@@ -393,7 +398,7 @@ function contact(now: Date) {
   </div>
   <footer class="site-foot">
     <div class="foot-brand">${sigil({ className: 'foot-mark' })}<p><b>${esc(IDENTITY.name)}</b><span>${esc(IDENTITY.role)} · ${esc(IDENTITY.location)}</span></p></div>
-    <p class="foot-built">Forged with TypeScript · Three.js · GLSL · GSAP · Lenis · Web Audio · Vercel Edge</p>
+    <p class="foot-built">Built with Claude Code · TypeScript · Three.js · GLSL · GSAP · Lenis · Web Audio · Vercel Edge</p>
     <p class="foot-copy">© <span data-bind="year">${now.getFullYear()}</span> ${esc(IDENTITY.name)} — seven dragons, zero timetables.</p>
     <a class="foot-top" href="#origin" data-top>Back to the fire ↑</a>
   </footer>

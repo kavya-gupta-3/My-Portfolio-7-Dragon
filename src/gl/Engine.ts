@@ -12,7 +12,7 @@ import {
   WebGLRenderer,
 } from 'three';
 import type { Quality } from '../core/quality';
-import { clamp, damp, smoothstep } from '../core/math';
+import { clamp, damp, lerp, smoothstep } from '../core/math';
 import { STAGES } from '../data/content';
 import { curve, type Shot } from './cinema/timeline';
 import { Director, STAGE_COUNT, stageCenter } from './Director';
@@ -98,6 +98,8 @@ const SCALE_FLOOR = 0.6;
 const CHIP_BUDGET = 15;
 /** How fast the opening shot's far world turns (radians a second): once round in about two and a half minutes. */
 const SKY_TURN = 0.042;
+/** Seconds Ignis's fire takes to reach Pixel in the opening shot: across the circle, and on a phone, where they sit close. */
+const FIRE_CROSSING = [0.35, 0.16] as const;
 
 /** Opening sequence, seconds: eyes open in the dark, then each dragon ignites. */
 export const INTRO = {
@@ -137,8 +139,8 @@ export class Engine {
   onHover: ((dragon: number) => void) | null = null;
   /** A dragon's name has hit the screen in its entrance. */
   onEntryTitle: ((dragon: number) => void) | null = null;
-  /** An entrance has handed over to the film. */
-  onEntryEnd: ((dragon: number) => void) | null = null;
+  /** An entrance has handed over to the film, or was `cut` short by the page leaving its chapter. */
+  onEntryEnd: ((dragon: number, cut: boolean) => void) | null = null;
   /** The dragon under the pointer, or −1. */
   hovered = -1;
   /** Sound requests from the dragons. */
@@ -420,7 +422,7 @@ export class Engine {
     }
     if (e.t >= 1) {
       this.entry = null;
-      this.onEntryEnd?.(e.dragon);
+      this.onEntryEnd?.(e.dragon, false);
     }
   }
 
@@ -504,6 +506,12 @@ export class Engine {
     const reduced = this.quality.reducedMotion;
     const aspect = this.width / this.height;
 
+    // the page was taken to another chapter mid-entrance: that entrance is over
+    if (this.entry?.started && input.scene !== this.entry.dragon) {
+      const gone = this.entry.dragon;
+      this.entry = null;
+      this.onEntryEnd?.(gone, true);
+    }
     const entry = this.entry;
     if (input.scene !== this.current || (entry && !entry.started)) {
       this.cut(input.scene);
@@ -703,9 +711,14 @@ export class Engine {
   /** A click: the dragon of the current chapter answers. `loud` when it was the one clicked. */
   provoke(loud = true) {
     const dragon = this.dragons[this.current];
-    if (!dragon || !dragon.ready) return null;
+    if (!dragon || !dragon.ready || this.introT >= 0 || this.now === 0) return null;
     dragon.provoke(this.ctx, loud);
-    if (this.ctx.conclave > 0.5) for (const d of this.dragons) if (d) d.rage = 1;
+    if (this.ctx.conclave > 0.5) {
+      // Ignis breathes across the circle: Pixel bursts when the flames reach it
+      for (const d of this.dragons) if (d && d.stage !== 1) d.rage = 1;
+      const narrow = 1 - smoothstep(0.62, 0.9, this.width / this.height);
+      this.dragons[1]?.struck(lerp(FIRE_CROSSING[0], FIRE_CROSSING[1], narrow));
+    }
     return dragon;
   }
 

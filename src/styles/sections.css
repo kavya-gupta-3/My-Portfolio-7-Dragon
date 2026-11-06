@@ -1053,6 +1053,49 @@
   border-radius: 50%;
   background: var(--c1);
 }
+/* how the work gets done: with AI, and this site is the proof */
+.ai-way {
+  width: min(880px, 100%);
+  margin: clamp(56px, 9vh, 100px) auto 0;
+}
+.ai-way h3 {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  line-height: 1.1;
+}
+.ai-body {
+  margin-top: 10px;
+  color: var(--ink-2);
+}
+.ai-proof {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.ai-proof p {
+  color: var(--ink-2);
+}
+.ai-proof b {
+  color: var(--ink);
+}
+.ai-stats {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.ai-stats b {
+  display: block;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: var(--c1);
+}
+.ai-stats span {
+  font-size: 0.84rem;
+  color: var(--dim);
+}
 .arsenal {
   margin-top: clamp(64px, 11vh, 120px);
 }
@@ -1119,56 +1162,6 @@
 @keyframes marquee {
   to { transform: translateX(-50%); }
 }
-.gh-live {
-  margin-top: clamp(56px, 9vh, 100px) !important;
-}
-.gh-live[hidden] {
-  display: none;
-}
-.gh-dot {
-  color: #6dffb0 !important;
-}
-.gh-dot::before {
-  content: '';
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-right: 8px;
-  border-radius: 50%;
-  background: #6dffb0;
-}
-.gh-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 16px;
-}
-.gh-stats div b {
-  display: block;
-  font-size: 1.9rem;
-  font-weight: 750;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-.gh-stats div span {
-  font-size: 0.84rem;
-  color: var(--dim);
-}
-.gh-langs {
-  margin-top: 18px;
-  display: flex;
-  height: 8px;
-  overflow: hidden;
-  border-radius: var(--pill);
-  background: var(--faint);
-}
-.gh-langs i {
-  height: 100%;
-}
-.gh-legend {
-  margin-top: 10px;
-  font-size: 0.82rem;
-  color: var(--dim);
-}
 
 /* ---------------------------------------------------------- 04 projects */
 
@@ -1205,8 +1198,16 @@
   transform-style: preserve-3d;
 }
 .proj:nth-child(1),
-.proj:nth-child(2) {
+.proj:nth-child(2),
+.proj--wide ~ .proj:nth-child(3) {
   grid-column: span 3;
+}
+/* the headline project takes the whole row, and a wider picture */
+.proj.proj--wide {
+  grid-column: 1 / -1;
+}
+.proj--wide .proj-art {
+  aspect-ratio: 16 / 5;
 }
 .proj:hover {
   border-color: hsl(var(--h) 100% 62% / 0.5);
@@ -1761,8 +1762,17 @@
   }
   .proj,
   .proj:nth-child(1),
-  .proj:nth-child(2) {
+  .proj:nth-child(2),
+  .proj--wide ~ .proj:nth-child(3),
+  .proj.proj--wide {
     grid-column: auto;
+  }
+  .proj--wide .proj-art {
+    aspect-ratio: 16 / 8;
+  }
+  .ai-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
   .pro-row {
     padding: 14px 16px;

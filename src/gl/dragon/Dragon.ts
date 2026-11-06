@@ -121,6 +121,8 @@ export abstract class Dragon {
   stagehand: Stagehand | null = null;
   /** 0‥1, spikes on click and decays. */
   rage = 0;
+  /** Seconds until a blow already on its way lands (another dragon's fire). */
+  private incoming = 0;
   abstract readonly beats: readonly Beat[];
   abstract readonly shots: readonly Shot[];
   abstract readonly throne: Throne;
@@ -281,6 +283,7 @@ export abstract class Dragon {
     perform(this.beats, land, this.acting);
     this.entryBeats = [...e.beats, freeze(this.acting)];
     this.lastEntry = -1;
+    this.jump();
     this.gesture = null;
     this.gestureEnv = 0;
     const rig = makeRig();
@@ -293,6 +296,11 @@ export abstract class Dragon {
   /** Click reaction. Subclasses add their own flourish; `loud` says whether it may make a sound. */
   provoke(_ctx: FrameContext, _loud = true) {
     this.rage = 1;
+  }
+
+  /** Hit by something that takes `seconds` to reach it: it flares as it lands. */
+  struck(seconds: number) {
+    if (this.incoming <= 0) this.incoming = seconds;
   }
 
   /** How far this dragon has left the opening shot (Ignis never leaves). */
@@ -312,13 +320,18 @@ export abstract class Dragon {
     if (this.jumping) this.fresh = true;
     this.jumping = false;
     this.rage = Math.max(0, this.rage - ctx.dt * 0.45);
+    if (this.incoming > 0) {
+      this.incoming -= ctx.dt;
+      if (this.incoming <= 0) this.rage = 1;
+    }
     this.behave(ctx, mine);
     this.hover = damp(this.hover, ctx.focus === this.stage ? 1 : 0, 7, ctx.dt);
     this.dimmed = damp(this.dimmed, ctx.focus >= 0 && ctx.focus !== this.stage ? 1 : 0, 6, ctx.dt);
     const u = this.uniforms;
     u.uTime.value = ctx.time;
     u.uReveal.value = mine && ctx.scene !== 0 ? 1 : ctx.reveal * (1 - away);
-    u.uEyeOpen.value = ctx.eyes * (1 - away);
+    // its eyes go with it as it leaves the opening shot; in its own chapter they are open
+    u.uEyeOpen.value = ctx.eyes * (mine && ctx.scene !== 0 ? 1 : 1 - away);
     u.uRage.value = Math.max(this.rage, this.hover * 0.42, this.gesture === 'roar' ? this.gestureEnv * 0.85 : 0);
     u.uPulse.value = mine ? ctx.pulse : 0;
     // in the line-up the wings sit level, and let go as the dragon takes off
@@ -746,7 +759,7 @@ export abstract class Dragon {
 
     const haze = u.uHaze.value as Vector4;
     // on a narrow screen there is no room beside the text, so it sinks further back
-    const behind = ctx.aspect < 1 && ctx.entry < 0 && ctx.scene === this.stage ? smoothstep(0, 0.4, ctx.page) * 0.78 : 0;
+    const behind = ctx.aspect < 1 && ctx.scene === this.stage ? smoothstep(0, 0.4, ctx.page) * 0.78 * (ctx.entry < 0 ? 1 : smoothstep(0.84, 1, ctx.entry)) : 0;
     haze.set(this.hazeColor.r, this.hazeColor.g, this.hazeColor.b, Math.max(a.haze, this.dimmed * 0.5, behind));
   }
 

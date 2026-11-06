@@ -78,7 +78,7 @@ export class Scroll {
     this.local = elements.map(() => 0);
     this.overlap();
     this.measure();
-    // content that arrives late (live GitHub stats, fonts) moves everything below it
+    // content that arrives late (fonts) moves everything below it
     new ResizeObserver(() => this.measure()).observe(document.body);
   }
 
